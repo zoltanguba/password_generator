@@ -91,8 +91,21 @@ public class sqlConnection {
             System.out.println("User input saved.");
         }
         catch(Exception e){
-            System.out.println("Save Input Error: " + e.getMessage());
+            System.out.println("saveUserInput Error: " + e.getMessage());
         }
+    }
+
+    public void modifyPassword(String website, String username, String newPassword){
+        try{
+            this.stnt = conn.createStatement();
+            System.out.println("UPDATE passwords SET password = '" + newPassword + "' WHERE website = '" + website + "' and username = '" + username + "';");
+            stnt.executeUpdate("UPDATE passwords SET password = '" + newPassword + "' WHERE website = '" + website + "' and username = '" + username + "';");
+            System.out.println("Password updated");
+        }
+        catch(Exception e){
+            System.out.println("modifyPassword Error: " + e.getMessage());
+        }
+
     }
 
     // Close connection

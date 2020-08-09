@@ -231,6 +231,10 @@ public class AppWindow extends Application{
 
         //Modify password save new entry button
         Button saveModifiedPassword = new Button("Save Modified Password");
+        saveModifiedPassword.setOnAction(e -> {
+            checkAndModifyPassword(websiteSelectionDropDown.getValue(), userNameSelectionDropDown.getValue(), modifyPasswordEntry.getText());
+            modifyPasswordEntry.setText("");
+        });
         GridPane.setConstraints(saveModifiedPassword, 5, 5);
 
 
@@ -320,6 +324,21 @@ public class AppWindow extends Application{
         }
         catch (Exception e){
             System.out.println("showPassword Error: " + e.getMessage());
+        }
+    }
+
+    private void checkAndModifyPassword(String website, String userName, String newPassword){
+        if(website.length() != 0 && userName.length() != 0 && newPassword.length() != 0){
+            boolean result = ConfirmBox.display("Modify Existing Password", "Are you sure you want to modify the password?");
+            if(result){
+                sqlConnection connection = new sqlConnection();
+                connection.modifyPassword(website, userName, newPassword);
+                connection.closeConnection();
+                System.out.println("Password modified");
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Please provide input for all fields!");
         }
     }
 
