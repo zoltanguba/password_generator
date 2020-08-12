@@ -207,7 +207,6 @@ public class AppWindow extends Application{
 
         //Query password with selected parameters
         Button queryPassword = new Button("Show Password");
-        GridPane.setConstraints(queryPassword, 5, 3);
         queryPassword.setOnAction(e -> {
             if(showPasswordToggle){
                 showPasswordToggle = false;
@@ -220,6 +219,7 @@ public class AppWindow extends Application{
                 showPasswordToggle = true;
             }
         });
+        GridPane.setConstraints(queryPassword, 5, 3);
 
         //Modify password label
         Label modifyPasswordLabel = new Label("Enter new password to overwrite the existing one");
@@ -232,12 +232,18 @@ public class AppWindow extends Application{
         //Modify password save new entry button
         Button saveModifiedPassword = new Button("Save Modified Password");
         saveModifiedPassword.setOnAction(e -> {
-            checkAndModifyPassword(websiteSelectionDropDown.getValue(), userNameSelectionDropDown.getValue(), modifyPasswordEntry.getText());
+            checkAndModifyPassword(websiteSelectionDropDown, userNameSelectionDropDown, modifyPasswordEntry);
             modifyPasswordEntry.setText("");
         });
         GridPane.setConstraints(saveModifiedPassword, 5, 5);
 
-
+        //Delete password button
+        Button deletePassword = new Button("Delete Password");
+        deletePassword.setOnAction(e -> {
+            checkAndDeletePassword(websiteSelectionDropDown, userNameSelectionDropDown);
+            updateWebsiteList(websiteSelectionDropDown);
+        });
+        GridPane.setConstraints(deletePassword, 6, 3);
 
 
 
@@ -249,7 +255,7 @@ public class AppWindow extends Application{
 
         getPasswordGrid.getChildren().addAll(goToPassword2, queryPassword, websiteSelectionDropDown, filterOnWebsite,
                 userNameSelectionDropDown, showPassword, getPasswordLabel, modifyPasswordLabel, modifyPasswordEntry,
-                saveModifiedPassword);
+                saveModifiedPassword, deletePassword);
         getPasswordScene = new Scene(getPasswordGrid, 1000, 400);
 
 
@@ -327,18 +333,32 @@ public class AppWindow extends Application{
         }
     }
 
-    private void checkAndModifyPassword(String website, String userName, String newPassword){
-        if(website.length() != 0 && userName.length() != 0 && newPassword.length() != 0){
+    private void checkAndModifyPassword(ComboBox<String> website, ComboBox<String> userName, TextField newPassword){
+        if(website.getValue() != null && userName.getValue() != null && newPassword.getText().length() != 0){
             boolean result = ConfirmBox.display("Modify Existing Password", "Are you sure you want to modify the password?");
             if(result){
                 sqlConnection connection = new sqlConnection();
-                connection.modifyPassword(website, userName, newPassword);
+                connection.modifyPassword(website.getValue(), userName.getValue(), newPassword.getText());
                 connection.closeConnection();
                 System.out.println("Password modified");
             }
         }
         else{
             JOptionPane.showMessageDialog(null, "Please provide input for all fields!");
+        }
+    }
+
+    private void checkAndDeletePassword(ComboBox<String> website, ComboBox<String> userName){
+        if(website.getValue() != null && userName.getValue() != null){
+            boolean result = ConfirmBox.display("Delete Password", "Are you sure you want to delete the password?");
+            if(result){
+                sqlConnection connection = new sqlConnection();
+                connection.deletePassword(website.getValue(), userName.getValue());
+                connection.closeConnection();
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Please select a website-username pair to proceed");
         }
     }
 

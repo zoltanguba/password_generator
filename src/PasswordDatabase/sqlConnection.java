@@ -95,17 +95,28 @@ public class sqlConnection {
         }
     }
 
+    //Modify selected entry
     public void modifyPassword(String website, String username, String newPassword){
         try{
             this.stnt = conn.createStatement();
-            System.out.println("UPDATE passwords SET password = '" + newPassword + "' WHERE website = '" + website + "' and username = '" + username + "';");
             stnt.executeUpdate("UPDATE passwords SET password = '" + newPassword + "' WHERE website = '" + website + "' and username = '" + username + "';");
             System.out.println("Password updated");
         }
         catch(Exception e){
             System.out.println("modifyPassword Error: " + e.getMessage());
         }
+    }
 
+    //Delete selected entry
+    public void deletePassword(String website, String username){
+        try{
+            this.stnt = conn.createStatement();
+            stnt.executeUpdate("DELETE FROM passwords WHERE website = '" + website + "' and username = '" + username + "';");
+            System.out.println("Password deleted");
+        }
+        catch(Exception e){
+            System.out.println("deletePassword Error: " + e.getMessage());
+        }
     }
 
     // Close connection
